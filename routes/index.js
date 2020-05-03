@@ -8,11 +8,20 @@ const router = express.Router();
 module.exports = (params) => {
   const { speakersService } = params;
 
-  router.get('/', async (request, response) => {
-    const topSpeakers = await speakersService.getList();
-    const artwork = await speakersService.getAllArtwork();
-    // console.log(allArtwork);
-    response.render('layout', { pageTitle: 'Welcome', template: 'index', topSpeakers, artwork });
+  router.get('/', async (request, response, next) => {
+    try {
+      const topSpeakers = await speakersService.getList();
+      const artwork = await speakersService.getAllArtwork();
+      // console.log(allArtwork);
+      return response.render('layout', {
+        pageTitle: 'Welcome',
+        template: 'index',
+        topSpeakers,
+        artwork,
+      });
+    } catch (err) {
+      return next(err);
+    }
   });
 
   router.use('/speakers', speakersRoute(params));
